@@ -17,6 +17,8 @@
 package com.example.android.dessertclicker
 
 import android.content.ActivityNotFoundException
+import android.content.res.Configuration
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -25,6 +27,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import com.example.android.dessertclicker.databinding.ActivityMainBinding
+
+const val KEY_REVENUE = "revenue_key"
+const val KEY_DESSERT_SOLD = "dessert_sold_key"
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,12 +75,75 @@ class MainActivity : AppCompatActivity() {
             onDessertClicked()
         }
 
+        if(savedInstanceState != null) {
+
+            revenue = savedInstanceState.getInt(KEY_REVENUE, 0)
+            dessertsSold = savedInstanceState.getInt(KEY_DESSERT_SOLD, 0)
+
+        }
+
         // Set the TextViews to the right values
         binding.revenue = revenue
         binding.amountSold = dessertsSold
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // In landscape
+//            println(orientation)
+
+            startSound()
+
+//            Toast.makeText(this, "$orientation", Toast.LENGTH_SHORT).show()
+        } else {
+            // In portrait
+//            println(orientation)
+//            Toast.makeText(this, "$orientation", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+//        startSound()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+    }
+
+    fun startSound() {
+
+        val mediaPlayer = MediaPlayer.create(this, R.raw.happy_birthday)
+
+        mediaPlayer.start();
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putInt(KEY_DESSERT_SOLD, dessertsSold)
+        outState.putInt(KEY_REVENUE, revenue)
+
+        showCurrentDessert()
     }
 
     /**
@@ -127,6 +195,7 @@ class MainActivity : AppCompatActivity() {
                 .intent
         try {
             startActivity(shareIntent)
+//            onPause()
         } catch (ex: ActivityNotFoundException) {
             Toast.makeText(this, getString(R.string.sharing_not_available),
                     Toast.LENGTH_LONG).show()
